@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# <repo>/.githooks/pre-commit
+#
+# 설치(repo에서 1회): git config core.hooksPath .githooks
+#   → 같은 repo의 모든 worktree에 공유됨.
+# 동작: 커밋 주체(나/Claude/Codex)와 무관하게 커밋 시 빌드/테스트를 강제하는 백스톱.
+#       단순 질문에는 안 돈다(커밋을 안 하므로). 이 파일 자체가 빌드/테스트 명령의 단일 소스다.
+
+[ -x ./gradlew ] || exit 0   # gradle repo가 아니면 skip (유저 환경의 다른 repo 보호)
+
+# --- repo에 맞게 수정 (아래는 papago-modules 류 예시) ---
+./gradlew build test --quiet || {
+  echo "❌ 빌드/테스트 실패 — 커밋 중단. 고친 뒤 다시 커밋." >&2
+  exit 1
+}

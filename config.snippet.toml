@@ -1,0 +1,7 @@
+# ~/.codex/config.toml 에 병합 (유저 레벨 — 모든 repo·worktree에 적용)
+
+approval_policy = "on-request"      # 워크스페이스 밖/위험 동작에만 승인 요청
+sandbox_mode    = "workspace-write" # 워크스페이스 내 파일 편집은 프롬프트 없이 (CC의 acceptEdits 대응)
+
+[features]
+multi_agent = true                  # 리뷰용 서브에이전트 워크플로우 활성화

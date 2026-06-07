@@ -65,9 +65,14 @@ grep -q '커밋 루프 (코드 변경 기본 규칙)' ~/.claude/CLAUDE.md \
 
 ```bash
 mkdir -p ~/.codex
-# AGENTS.md: 기존(비어있지 않으면) 앞에 붙이기. Codex가 매 세션 자동 로드.
-[ -s ~/.codex/AGENTS.md ] && cat AGENTS.md ~/.codex/AGENTS.md > /tmp/a.md && mv /tmp/a.md ~/.codex/AGENTS.md \
-  || cp AGENTS.md ~/.codex/AGENTS.md
+# AGENTS.md: 이미 적용됐으면 skip / 비어있지 않으면 앞에 prepend / 아니면 복사 (Codex가 매 세션 자동 로드)
+if [ -s ~/.codex/AGENTS.md ] && grep -qF "커밋 루프 (전역 작업 규칙)" ~/.codex/AGENTS.md; then
+  : # 이미 적용됨
+elif [ -s ~/.codex/AGENTS.md ]; then
+  cat AGENTS.md ~/.codex/AGENTS.md > /tmp/a.md && mv /tmp/a.md ~/.codex/AGENTS.md
+else
+  cp AGENTS.md ~/.codex/AGENTS.md
+fi
 ```
 config.toml은 최상위 키 `approval_policy = "on-request"` / `sandbox_mode = "workspace-write"`와 `[features] multi_agent = true`를 기존 파일에 손으로 병합한다(최상위 키는 반드시 첫 `[table]` **위에**, 중복 키 주의). 리뷰는 Codex 내장 `/review`.
 
